@@ -28,12 +28,10 @@
         this._settings = settings;
 
         var input = $(input);
-        var container = $(document.createElement('div'));
-        container.attr('className',  'searchlight-balloon');
+        var container = $('<div></div>');
+        container.attr('class',  'searchlight-balloon');
         container.css({
-            position: 'absolute',
             top: input.offset().top + input.outerHeight(),
-            display: 'none'
         });
 
         if (settings.width == 'auto') {
@@ -46,33 +44,23 @@
         }
 
         var results = $(document.createElement('div'));
-        results.attr('className', 'searchlight-results-wrapper');
-        results.css({
-            height: '100%'
-        });
-
-        if ($.browser.msie && parseFloat($.browser.version) <= 7) {
-            results.css({
-                width: '1%'
-            });
-        }
+        results.attr('class', 'searchlight-results-wrapper');
 
         container.append(results);
-        $(document.body).append(container);
-
+        $('body').append(container);
 
         this._input = input;
         this._container = container;
         this._searchURL = url;
         this._resultsContainer = results;
 
-        input.bind('focus.searchlight', {searchlight: this}, function(evt) {
+        input.on('focus.searchlight', {searchlight: this}, function(evt) {
             var searchlight = evt.data.searchlight;
             if (this.value.length >= settings.minimumCharacters) {
                 searchlight.search(this.value);
             }
         });
-        $(document.body).bind('mousedown.searchlight', {searchlight: this}, function(evt) {
+        $('body').on('mousedown.searchlight', {searchlight: this}, function(evt) {
             var searchlight = evt.data.searchlight;
 
             // Make sure we didn't click the searchlight
@@ -89,7 +77,7 @@
             searchlight.hide();
         });
 
-        input.bind('keydown.searchlight', {searchlight: this}, function(evt) {
+        input.on('keydown.searchlight', {searchlight: this}, function(evt) {
             var searchlight = evt.data.searchlight;
             if (evt.which == 38 && searchlight._selectedRow > 0) {
                 // Up arrow
@@ -104,7 +92,7 @@
                 evt.preventDefault();
             }
         });
-        input.bind('keyup.searchlight', {searchlight: this}, function(evt) {
+        input.on('keyup.searchlight', {searchlight: this}, function(evt) {
             var searchlight = evt.data.searchlight;
             if (searchlight._searchDelayTimer) {
                 clearTimeout(searchlight._searchDelayTimer);
@@ -119,10 +107,10 @@
                 }
             }, settings.searchDelay);
         });
-        input.bind('keypress.searchlight', {searchlight: this}, function(evt) {
+        input.on('keypress.searchlight', {searchlight: this}, function(evt) {
             var searchlight = evt.data.searchlight;
         });
-        this._container.bind('mouseleave.searchlight', {searchlight: this}, function(evt) {
+        this._container.on('mouseleave.searchlight', {searchlight: this}, function(evt) {
             var searchlight = evt.data.searchlight;
             searchlight.selectRow(-1);
         });
@@ -170,7 +158,7 @@
             var r = results[i];
 
             var tr = document.createElement('tr');
-            $(tr).attr('className', 'searchlight-not-selected');
+            $(tr).attr('class', 'searchlight-not-selected');
 
             var th = document.createElement('th');
             var td = document.createElement('td');
@@ -185,10 +173,8 @@
             }
 
             if (this._settings.showIcons) {
-                var img = document.createElement('img');
-                img.className = 'searchlight-result-icon';
-                img.style.width = '16px';
-                img.style.height = '16px';
+                var img = $('<img>');
+                img.addClass('searchlight-result-icon');
                 // If icon, then use that otherwise use blank
                 img.src = r[2] ? r[2] : 'icons/blank.gif';
                 $(td_d).append(img);
@@ -199,11 +185,11 @@
             $(tr).append(th);
             $(tr).append(td);
 
-            $(tr).bind('mousemove', {searchlight: this}, function(evt) {
+            $(tr).on('mousemove', {searchlight: this}, function(evt) {
                 var searchlight = evt.data.searchlight;
                 searchlight.selectRow(this._rowId);
             });
-            $(tr).bind('click', {searchlight: this}, function(evt) {
+            $(tr).on('click', {searchlight: this}, function(evt) {
                 var searchlight = evt.data.searchlight;
                 searchlight.activateRow(this._rowId);
             });
@@ -215,10 +201,10 @@
         }
 
         // Add spacer if this isn't the first category
-        var tr = document.createElement('tr');
-        var th = document.createElement('th');
-        var td = document.createElement('td');
-        tr.className = 'searchlight-spacer-row';
+        var tr = $('<tr></tr>');
+        var th = $('<th></th>');
+        var td = $('<td></td>');
+        tr.addClass('searchlight-spacer-row');
 
         $(tr).append(th);
         $(tr).append(td);
